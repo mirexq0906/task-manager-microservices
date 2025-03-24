@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: user-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/task_db
+    username: root
+    password: root
+  sql:
+    init:
+      mode: always
+server:
+  port: 8081
