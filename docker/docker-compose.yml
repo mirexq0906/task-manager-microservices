@@ -1,4 +1,43 @@
 services:
+  elasticsearch:
+    image: elasticsearch:7.16.2
+    container_name: elasticsearch
+    restart: always
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data/
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      discovery.type: single-node
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+
+  logstash:
+    image: logstash:7.16.2
+    container_name: logstash
+    restart: always
+    volumes:
+      - ./logstash/:/logstash_dir
+    command: logstash -f /logstash_dir/logstash.conf
+    depends_on:
+      - elasticsearch
+    ports:
+      - '9600:9600'
+      - '5000:5000/tcp'
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+
+  kibana:
+    image: kibana:7.16.2
+    container_name: kibana
+    restart: always
+    ports:
+      - '5601:5601'
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+
   db:
     image: postgres:12.3
     restart: always
@@ -8,3 +47,48 @@ services:
       POSTGRES_PASSWORD: root
       POSTGRES_USER: root
       POSTGRES_DB: task_db
+
+  discovery-service:
+    build: "../discovery-service"
+    container_name: discovery-service
+    ports:
+      - '8761:8761'
+    depends_on:
+      - logstash
+      - db
+
+  config-service:
+    build: "../config-service"
+    container_name: config-service
+    ports:
+      - '8888:8888'
+    depends_on:
+      - discovery-service
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
+
+  gateway-service:
+    build: "../gateway-service"
+    container_name: gateway-service
+    ports:
+      - '8087:8087'
+    depends_on:
+      - discovery-service
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
+
+  user-service:
+    build: "../user-service"
+    container_name: user-service
+    ports:
+      - '8081:8081'
+    depends_on:
+      - config-service
+      - discovery-service
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
+      - CONFIG_SERVICE=http://config-service:8888
+      - DB_URL=db:5432
+
+volumes:
+  elastic_data: {}
