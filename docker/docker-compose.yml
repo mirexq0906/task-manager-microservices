@@ -38,6 +38,23 @@ services:
     depends_on:
       - elasticsearch
 
+  prometheus:
+    image: prom/prometheus:v2.44.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+      image: grafana/grafana:9.5.2
+      container_name: grafana
+      ports:
+        - "3000:3000"
+      restart: unless-stopped
+      volumes:
+        - ./config/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+
   db:
     image: postgres:12.3
     restart: always
@@ -92,3 +109,6 @@ services:
 
 volumes:
   elastic_data: {}
+
+networks:
+  monitoring:
