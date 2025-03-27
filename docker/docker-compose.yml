@@ -38,22 +38,22 @@ services:
     depends_on:
       - elasticsearch
 
-  prometheus:
-    image: prom/prometheus:v2.44.0
-    container_name: prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
-
-  grafana:
-      image: grafana/grafana:9.5.2
-      container_name: grafana
-      ports:
-        - "3000:3000"
-      restart: unless-stopped
-      volumes:
-        - ./config/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+#  prometheus:
+#    image: prom/prometheus:v2.44.0
+#    container_name: prometheus
+#    ports:
+#      - "9090:9090"
+#    volumes:
+#      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+#
+#  grafana:
+#      image: grafana/grafana:9.5.2
+#      container_name: grafana
+#      ports:
+#        - "3000:3000"
+#      restart: unless-stopped
+#      volumes:
+#        - ./config/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
 
   db:
     image: postgres:12.3
@@ -94,18 +94,18 @@ services:
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
 
-  user-service:
-    build: "../user-service"
-    container_name: user-service
-    ports:
-      - '8081:8081'
-    depends_on:
-      - config-service
-      - discovery-service
-    environment:
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
-      - CONFIG_SERVICE=http://config-service:8888
-      - DB_URL=db:5432
+#  user-service:
+#    build: "../user-service"
+#    container_name: user-service
+#    ports:
+#      - '8081:8081'
+#    depends_on:
+#      - config-service
+#      - discovery-service
+#    environment:
+#      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
+#      - CONFIG_SERVICE=http://config-service:8888
+#      - DB_URL=db:5432
 
 volumes:
   elastic_data: {}

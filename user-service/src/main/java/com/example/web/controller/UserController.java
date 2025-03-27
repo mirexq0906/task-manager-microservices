@@ -39,21 +39,4 @@ public class UserController {
         );
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<String> login() {
-        log.info("Ураа");
-        log.warn("Ураа");
-        return ResponseEntity.ok("login success");
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@RequestBody UserDto userDto) {
-        User user = this.userService.register(
-                this.userMapper.requestToUser(userDto)
-        );
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-            this.userMapper.userToUserResponse(user)
-        );
-    }
-
 }

@@ -22,6 +22,12 @@ public class UserRepositoryImpl implements UserRepository {
             WHERE id = ?
             """;
 
+    private final String FIND_BY_USERNAME = """
+            SELECT id, username, email, password, role, create_time, update_time
+            FROM users
+            WHERE username = ?
+            """;
+
     private final String CREATE = """
             INSERT INTO users (username, email, password, role)
             VALUES (?, ?, ?, ?)
@@ -37,6 +43,12 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> findById(Long id) {
         User user = this.jdbcTemplate.queryForObject(FIND_BY_ID, UserRowMapper::mapRow, id);
+        return Optional.ofNullable(user);
+    }
+
+    @Override
+    public Optional<User> findByUsername(String username) {
+        User user = this.jdbcTemplate.queryForObject(FIND_BY_USERNAME, UserRowMapper::mapRow, username);
         return Optional.ofNullable(user);
     }
 
