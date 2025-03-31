@@ -94,18 +94,18 @@ services:
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
 
-#  user-service:
-#    build: "../user-service"
-#    container_name: user-service
-#    ports:
-#      - '8081:8081'
-#    depends_on:
-#      - config-service
-#      - discovery-service
-#    environment:
-#      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
-#      - CONFIG_SERVICE=http://config-service:8888
-#      - DB_URL=db:5432
+  user-service:
+    build: "../user-service"
+    container_name: user-service
+    ports:
+      - '8081:8081'
+    depends_on:
+      - config-service
+      - discovery-service
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
+      - CONFIG_SERVICE=http://config-service:8888
+      - DB_URL=db:5432
 
 volumes:
   elastic_data: {}

@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: task-service
+  config:
+    import: optional:configserver:${CONFIG_SERVICE:http://localhost:8888}
+  sql:
+    init:
+      mode: always
+  datasource:
+    url: jdbc:postgresql://localhost:5432/task_db
+    password: root
+    username: root
+    hikari:
+      schema: task_service_schema
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
+server:
+  port: 8085
